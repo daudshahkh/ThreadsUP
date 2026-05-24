@@ -174,7 +174,7 @@ export default function ThreadsUpStudioLayout() {
               transition={{ duration: 1, delay: 2.4 }}
               className="flex flex-col sm:flex-row gap-4"
             >
-              <a href="#collection" className="px-8 py-3 bg-[#0F2B24] border border-dashed border-[#C5A46D] text-[#C5A46D] hover:bg-[#C5A46D] hover:text-[#0F2B24] transition-colors duration-300 tracking-widest text-xs uppercase shadow-[0_4px_14px_rgba(0,0,0,0.5)]">
+              <a href="/shop" className="px-8 py-3 bg-[#0F2B24] border border-dashed border-[#C5A46D] text-[#C5A46D] hover:bg-[#C5A46D] hover:text-[#0F2B24] transition-colors duration-300 tracking-widest text-xs uppercase shadow-[0_4px_14px_rgba(0,0,0,0.5)]">
                 Shop Collection
               </a>
               <a href="#lookbook" className="px-8 py-3 bg-[#0F2B24] border border-dashed border-[#C5A46D] text-[#C5A46D] hover:bg-[#C5A46D] hover:text-[#0F2B24] transition-colors duration-300 tracking-widest text-xs uppercase shadow-[0_4px_14px_rgba(0,0,0,0.5)]">
