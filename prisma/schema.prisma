@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+// THE PRODUCT TABLE
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  category    String   // e.g., "Tops", "Bottoms", "Outerwear"
+  sku         String?  @unique // For your manufacturing/wholesale tracking
+  fabric      String?  // e.g., "240 GSM Heavyweight Cotton"
+  
+  // Images (Stored as URLs)
+  mainImage   String
+  hoverImage  String
+  gallery     String[] // Array of additional images
+  
+  // Available Sizes & Details
+  sizes       String[] // e.g., ["S", "M", "L", "XL"]
+  details     String[] // Array of bullet points for the product page
+  
+  // Inventory Control
+  inStock     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

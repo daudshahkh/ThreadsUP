@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCartStore } from "@/store/cartStore";
 import { Show, UserButton } from "@clerk/nextjs";
 
 export default function ThreadsUpStudioLayout() {
   const [isLoading, setIsLoading] = useState(true);
+  const { openCart, items } = useCartStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const products = [
@@ -129,16 +131,50 @@ export default function ThreadsUpStudioLayout() {
           <path d="M110,40 C 80,60 10,30 -10,70" fill="transparent" stroke="#C5A46D" strokeWidth="0.1" strokeDasharray="1,1" />
         </svg>
 
-        <header className="absolute top-0 right-0 p-6 md:p-10 z-50">
-          <Show when="signed-out">
-            <a href="/login" className="text-[#C5A46D] font-light tracking-widest text-xs uppercase hover:text-[#F5E7C1] transition-colors border-b border-dashed border-transparent hover:border-[#C5A46D]">
-              Sign In
+        <nav className="absolute top-0 left-0 w-full z-50 p-6 md:px-10 flex justify-between items-center border-b border-dashed border-[#C5A46D]/30 bg-[#0B0B0B]/50 backdrop-blur-md">
+          <a href="/" className="w-20 md:w-28 drop-shadow-xl hover:opacity-80 transition-opacity">
+            <img src="/logo.png" alt="ThreadsUP Studio Logo" className="w-full h-auto object-contain" />
+          </a>
+          
+          <div className="hidden lg:flex items-center gap-12 absolute left-1/2 transform -translate-x-1/2">
+            <a href="/shop" className="text-[#F5E7C1]/70 hover:text-[#C5A46D] tracking-widest text-[10px] uppercase transition-colors border-b border-dashed border-transparent hover:border-[#C5A46D] pb-1">
+              Collection
             </a>
-          </Show>
-          <Show when="signed-in">
-            <UserButton appearance={{ elements: { userButtonAvatarBox: "w-10 h-10 border border-dashed border-[#C5A46D]" } }} />
-          </Show>
-        </header>
+            <a href="/bundler" className="text-[#F5E7C1]/70 hover:text-[#C5A46D] tracking-widest text-[10px] uppercase transition-colors border-b border-dashed border-transparent hover:border-[#C5A46D] pb-1">
+              Curate a Fit
+            </a>
+            <a href="#lookbook" className="text-[#F5E7C1]/70 hover:text-[#C5A46D] tracking-widest text-[10px] uppercase transition-colors border-b border-dashed border-transparent hover:border-[#C5A46D] pb-1">
+              Lookbook
+            </a>
+          </div>
+
+          <div className="flex items-center gap-6 md:gap-8">
+            <button onClick={openCart} className="relative text-[#C5A46D] hover:text-[#F5E7C1] transition-colors group">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="square" strokeLinejoin="miter" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+              {items.length > 0 && (
+                <span className="absolute -top-1.5 -right-2 flex h-3.5 w-3.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C5A46D] opacity-40"></span>
+                  <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#C5A46D] text-[#0F2B24] text-[9px] items-center justify-center font-bold">
+                    {items.length}
+                  </span>
+                </span>
+              )}
+            </button>
+            
+            <div className="h-4 w-[1px] bg-[#C5A46D]/30 hidden sm:block"></div>
+
+            <Show when="signed-out">
+              <a href="/login" className="text-[#C5A46D] font-light tracking-widest text-[10px] uppercase hover:text-[#F5E7C1] transition-colors border-b border-dashed border-transparent hover:border-[#C5A46D] pb-1">
+                Sign In
+              </a>
+            </Show>
+            <Show when="signed-in">
+              <UserButton appearance={{ elements: { userButtonAvatarBox: "w-7 h-7 border border-dashed border-[#C5A46D]" } }} />
+            </Show>
+          </div>
+        </nav>
 
         <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden z-10 pt-10">
           <motion.div 

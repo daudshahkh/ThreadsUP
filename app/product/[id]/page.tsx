@@ -139,9 +139,16 @@ export default function ProductPage() {
             <img src="/logo.png" alt="ThreadsUP Studio Logo" className="w-full h-auto object-contain" />
           </a>
           <div className="hidden lg:flex items-center gap-12 absolute left-1/2 transform -translate-x-1/2">
-            <a href="/shop" className="text-[#F5E7C1]/70 hover:text-[#C5A46D] tracking-widest text-[10px] uppercase transition-colors border-b border-dashed border-transparent hover:border-[#C5A46D] pb-1">Collection</a>
-            <a href="/#lookbook" className="text-[#F5E7C1]/70 hover:text-[#C5A46D] tracking-widest text-[10px] uppercase transition-colors border-b border-dashed border-transparent hover:border-[#C5A46D] pb-1">Lookbook</a>
-          </div>
+          <a href="/shop" className="text-[#F5E7C1]/70 hover:text-[#C5A46D] tracking-widest text-[10px] uppercase transition-colors border-b border-dashed border-transparent hover:border-[#C5A46D] pb-1">
+            Collection
+          </a>
+          <a href="/bundler" className="text-[#C5A46D] tracking-widest text-[10px] uppercase border-b border-dashed border-transparent hover:border-[#C5A46D] pb-1">
+            Curate a Fit
+          </a>
+          <a href="/#lookbook" className="text-[#F5E7C1]/70 hover:text-[#C5A46D] tracking-widest text-[10px] uppercase transition-colors border-b border-dashed border-transparent hover:border-[#C5A46D] pb-1">
+            Lookbook
+          </a>
+        </div>
           <div className="flex items-center gap-6 md:gap-8">
             <button onClick={openCart} className="relative text-[#C5A46D] hover:text-[#F5E7C1] transition-colors group">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="square" strokeLinejoin="miter" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>

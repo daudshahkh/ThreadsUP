@@ -83,14 +83,14 @@ export default function ShopPage() {
         </a>
         
         <div className="hidden lg:flex items-center gap-12 absolute left-1/2 transform -translate-x-1/2">
-          <a href="/shop" className="text-[#C5A46D] tracking-widest text-[10px] uppercase border-b border-dashed border-[#C5A46D] pb-1">
+          <a href="/shop" className="text-[#F5E7C1]/70 hover:text-[#C5A46D] tracking-widest text-[10px] uppercase transition-colors border-b border-dashed border-transparent hover:border-[#C5A46D] pb-1">
             Collection
+          </a>
+          <a href="/bundler" className="text-[#C5A46D] tracking-widest text-[10px] uppercase border-b border-dashed border-transparent hover:border-[#C5A46D] pb-1">
+            Curate a Fit
           </a>
           <a href="/#lookbook" className="text-[#F5E7C1]/70 hover:text-[#C5A46D] tracking-widest text-[10px] uppercase transition-colors border-b border-dashed border-transparent hover:border-[#C5A46D] pb-1">
             Lookbook
-          </a>
-          <a href="#" className="text-[#F5E7C1]/70 hover:text-[#C5A46D] tracking-widest text-[10px] uppercase transition-colors border-b border-dashed border-transparent hover:border-[#C5A46D] pb-1">
-            Our Story
           </a>
         </div>
 
