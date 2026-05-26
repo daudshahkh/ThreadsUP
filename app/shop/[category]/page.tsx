@@ -78,24 +78,40 @@ export default function CategoryPage() {
         </div>
 
         {/* Product Grid */}
+{/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
           <AnimatePresence>
             {filteredProducts.map((product) => (
               <motion.div
-                key={product.id}
+                // Use ID for standard products, or SLUG for collection products
+                key={product.id || product.slug}
                 layout
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.5 }}
               >
-                <Link href={`/product/${product.id}`} className="block group">
+                {/* Dynamically link using ID or SLUG */}
+                <Link href={`/product/${product.id || product.slug}`} className="block group">
                   <div className="flex flex-col items-center bg-[#07110F]/40 p-4 border border-[#D0A85C]/20 border-dashed hover:bg-[#123229] hover:border-[#D0A85C] transition-all duration-500 shadow-lg">
                     <div className="w-full aspect-[4/5] overflow-hidden mb-6 bg-[#07110F] relative">
-                      <img src={product.mainImage || product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-0 transition-opacity duration-700" />
-                      {product.hoverImage && (
-                         <img src={product.hoverImage} alt={`${product.name} Lifestyle`} className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-80 transition-opacity duration-700 scale-105 group-hover:scale-100" />
+                      
+                      {/* Look for mainImage first, if not there, use frontImage */}
+                      <img 
+                        src={product.mainImage || product.frontImage} 
+                        alt={product.name} 
+                        className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-0 transition-opacity duration-700" 
+                      />
+                      
+                      {/* Look for hoverImage first, if not there, use backImage */}
+                      {(product.hoverImage || product.backImage) && (
+                         <img 
+                           src={product.hoverImage || product.backImage} 
+                           alt={`${product.name} Lifestyle`} 
+                           className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-80 transition-opacity duration-700 scale-105 group-hover:scale-100" 
+                         />
                       )}
+                      
                     </div>
                     <h3 className="font-serif text-[#F6E9C8] text-lg text-center group-hover:text-[#D0A85C] transition-colors duration-300">{product.name}</h3>
                     <p className="text-[#D0A85C]/80 font-light tracking-widest text-sm mt-2">{formatPrice(product.price)}</p>

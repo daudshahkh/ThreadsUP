@@ -6,15 +6,39 @@ import { motion, AnimatePresence } from "framer-motion";
 import SiteNav from "@/components/SiteNav";
 import ThreadBackground from "@/components/ThreadBackground";
 import { formatPrice, getProductById } from "@/data/products";
+import { studioCollections } from "@/data/collections"; 
 import { useCartStore } from "@/store/cartStore";
 
 export default function ProductPage() {
   const params = useParams();
   const productId = params.id as string;
-  const product = getProductById(productId);
+  
+  // The Smart Data Resolver & Adapter
+  let product: any = getProductById(productId);
+
+  if (!product) {
+    for (const collection of studioCollections) {
+      const foundItem = (collection as any).products?.find((p: any) => p.slug === productId) || 
+                        (collection as any).items?.find((p: any) => p.slug === productId);
+      
+      if (foundItem) {
+        product = {
+          ...foundItem,
+          id: foundItem.slug,
+          images: [foundItem.frontImage, foundItem.backImage].filter(Boolean),
+          sizes: ["S", "M", "L", "XL"],
+          details: ["Premium Heavyweight Cotton", "Oversized Drop-Shoulder Fit", "Machine Washable"]
+        };
+        break; 
+      }
+    }
+  }
+
   const priceLabel = product ? formatPrice(product.price) : "";
 
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  // 1. Switched to strict empty string to prevent React Ghost States
+  const [selectedSize, setSelectedSize] = useState<string>("");
+  
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isAdding, setIsAdding] = useState(false);
   const [buttonText, setButtonText] = useState("Add to Bag");
@@ -37,8 +61,9 @@ export default function ProductPage() {
     }, 800);
   };
 
+  // 2. Strict checks locked in to force the Modal to open
   const handleAddToCart = () => {
-    if (!selectedSize) {
+    if (selectedSize === "") {
       setPendingAction("cart");
       setIsSelectSizeModalOpen(true);
       return;
@@ -47,7 +72,7 @@ export default function ProductPage() {
   };
 
   const handleBuyNow = () => {
-    if (!selectedSize) {
+    if (selectedSize === "") {
       setPendingAction("buy");
       setIsSelectSizeModalOpen(true);
       return;
@@ -57,10 +82,13 @@ export default function ProductPage() {
 
   const handleModalSizeSelect = (size: string) => {
     setSelectedSize(size);
-    setIsSelectSizeModalOpen(false);
+    setIsSelectSizeModalOpen(false); // Close modal first
+    
+    // Execute the action the user originally clicked
     if (pendingAction === "cart") executeAddToCart(size);
     if (pendingAction === "buy") alert("Proceeding to secure checkout...");
-    setPendingAction(null);
+    
+    setPendingAction(null); // Reset the action
   };
 
   if (!product) {
@@ -81,8 +109,12 @@ export default function ProductPage() {
               <h3 className="text-2xl font-serif text-[#D0A85C] mb-2 text-center">Select Your Size</h3>
               <p className="text-xs text-[#F6E9C8]/60 tracking-widest uppercase mb-6 text-center">Choose a size to continue</p>
               <div className="flex gap-3 flex-wrap justify-center w-full">
-                {product.sizes.map((size) => (
-                  <button key={size} onClick={() => handleModalSizeSelect(size)} className="w-14 h-14 flex items-center justify-center border border-dashed border-[#D0A85C]/50 text-[#D0A85C] hover:border-[#D0A85C] hover:bg-[#D0A85C] hover:text-[#0B1F1A] transition-all duration-300 font-serif text-xl">
+                {product.sizes.map((size: string) => (
+                  <button 
+                    key={size} 
+                    onClick={() => handleModalSizeSelect(size)} 
+                    className="w-14 h-14 flex items-center justify-center border border-dashed border-[#D0A85C]/50 text-[#D0A85C] hover:border-[#D0A85C] hover:bg-[#D0A85C] hover:text-[#0B1F1A] transition-all duration-300 font-serif text-xl"
+                  >
                     {size}
                   </button>
                 ))}
@@ -145,7 +177,7 @@ export default function ProductPage() {
 
               <div ref={carouselRef} className="w-full overflow-hidden cursor-grab active:cursor-grabbing pb-4 relative">
                 <motion.div drag="x" dragConstraints={carouselRef} dragElastic={0.2} dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }} className="flex gap-3 w-max">
-                  {product.images.map((img, index) => (
+                  {product.images.map((img: string, index: number) => (
                     <motion.div key={`${img}-${index}`} onClick={() => setActiveImageIndex(index)} className={`w-20 h-24 flex-shrink-0 relative p-1 transition-all duration-300 pointer-events-auto ${activeImageIndex === index ? "border border-dashed border-[#D0A85C] opacity-100 shadow-[0_0_10px_rgba(208,168,92,0.3)]" : "border border-transparent opacity-50 hover:opacity-90"}`}>
                       <img src={img} alt={`Thumbnail ${index + 1}`} className="w-full h-full object-cover bg-[#07110F] pointer-events-none" />
                     </motion.div>
@@ -161,7 +193,7 @@ export default function ProductPage() {
                 <div className="w-full h-[1px] border-b border-dashed border-[#D0A85C]/30 mb-5" />
                 <p className="text-sm text-[#F6E9C8]/80 font-light leading-relaxed mb-6">{product.description}</p>
                 <ul className="mb-6 space-y-2">
-                  {product.details.map((detail) => (
+                  {product.details.map((detail: string) => (
                     <li key={detail} className="flex items-center text-xs font-light text-[#D0A85C] tracking-wide">
                       <span className="mr-3 text-[8px]">*</span> {detail}
                     </li>
@@ -173,8 +205,12 @@ export default function ProductPage() {
                     <button onClick={() => setIsSizeGuideOpen(true)} className="text-[10px] text-[#D0A85C] uppercase tracking-widest hover:underline decoration-dashed underline-offset-4">Size Guide</button>
                   </div>
                   <div className="flex gap-2 flex-wrap">
-                    {product.sizes.map((size) => (
-                      <button key={size} onClick={() => setSelectedSize(size)} className={`w-10 h-10 flex items-center justify-center border border-dashed transition-all duration-300 font-serif text-sm ${selectedSize === size ? "border-[#D0A85C] bg-[#D0A85C] text-[#0B1F1A]" : "border-[#D0A85C]/50 text-[#D0A85C] hover:border-[#D0A85C] hover:bg-[#123229]"}`}>
+                    {product.sizes.map((size: string) => (
+                      <button 
+                        key={size} 
+                        onClick={() => setSelectedSize(size)} 
+                        className={`w-10 h-10 flex items-center justify-center border border-dashed transition-all duration-300 font-serif text-sm ${selectedSize === size ? "border-[#D0A85C] bg-[#D0A85C] text-[#0B1F1A]" : "border-[#D0A85C]/50 text-[#D0A85C] hover:border-[#D0A85C] hover:bg-[#123229]"}`}
+                      >
                         {size}
                       </button>
                     ))}
@@ -194,4 +230,3 @@ export default function ProductPage() {
     </>
   );
 }
-

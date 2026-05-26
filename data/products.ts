@@ -97,7 +97,8 @@ export const productCatalog: Product[] = [
 export const categories: Array<"All" | ProductCategory> = ["All", "Tops", "Bottoms", "Outerwear"];
 
 export function formatPrice(price: number) {
-  return `$${price.toFixed(2)}`;
+  // Using the ₹ symbol
+  return `₹${price.toFixed(2)}`; 
 }
 
 export function getProductById(id: string) {
