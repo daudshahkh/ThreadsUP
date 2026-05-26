@@ -119,24 +119,30 @@ export default function ThreadsUpStudioLayout() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              <motion.div whileHover={{ scale: 0.98 }} className="relative group bg-[#0B1F1A] p-4 border border-[#D0A85C] border-dashed shadow-2xl">
-                <div className="w-full h-[350px] overflow-hidden bg-[#07110F]">
-                  <img src="/product-1.png" alt="Lookbook 1" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
-                </div>
-                <p className="mt-4 text-[#D0A85C] font-serif text-lg text-center">Premium Oversized Tees</p>
-              </motion.div>
+              {/* Image 1: Wrapped in a Link pointing to your Tops collection */}
+              <Link href="/shop/tops" className="block cursor-pointer">
+                <motion.div whileHover={{ scale: 0.98 }} className="relative group bg-[#0B1F1A] p-4 border border-[#D0A85C] border-dashed shadow-2xl h-full">
+                  <div className="w-full h-[350px] overflow-hidden bg-[#07110F]">
+                    <img src="/product-1.png" alt="Lookbook 1" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
+                  </div>
+                  <p className="mt-4 text-[#D0A85C] font-serif text-lg text-center">Premium Oversized Tees</p>
+                </motion.div>
+              </Link>
 
-              <motion.div whileHover={{ scale: 0.98 }} className="relative group bg-[#0B1F1A] p-4 border border-[#D0A85C] border-dashed shadow-2xl md:mt-16">
-                <div className="w-full h-[350px] overflow-hidden bg-[#07110F]">
-                  <img src="/product-1-lifestyle.png" alt="Lookbook 2" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
-                </div>
-                <p className="mt-4 text-[#D0A85C] font-serif text-lg text-center">Embroidered Streetwear</p>
-              </motion.div>
+              {/* Image 2: Wrapped in a Link pointing to a specific product or collection */}
+              <Link href="/shop/paws-and-pause" className="block cursor-pointer">
+                <motion.div whileHover={{ scale: 0.98 }} className="relative group bg-[#0B1F1A] p-4 border border-[#D0A85C] border-dashed shadow-2xl md:mt-16 h-full">
+                  <div className="w-full h-[350px] overflow-hidden bg-[#07110F]">
+                    <img src="/product-1-lifestyle.png" alt="Lookbook 2" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
+                  </div>
+                  <p className="mt-4 text-[#D0A85C] font-serif text-lg text-center">Embroidered Streetwear</p>
+                </motion.div>
+              </Link>
             </div>
+
+            {pawsAndPause && <CollectionMarquee collection={pawsAndPause} />}
           </div>
         </section>
-
-        {pawsAndPause && <CollectionMarquee collection={pawsAndPause} />}
 
         <section id="collection" className="py-24 px-6 md:px-12 lg:px-24 bg-[#07110F]/40 backdrop-blur-sm relative z-10 border-y border-dashed border-[#D0A85C]/30">
           <div className="max-w-6xl mx-auto">

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import SiteNav from "@/components/SiteNav";
@@ -36,34 +36,50 @@ export default function ProductPage() {
 
   const priceLabel = product ? formatPrice(product.price) : "";
 
-  // 1. Switched to strict empty string to prevent React Ghost States
-  const [selectedSize, setSelectedSize] = useState<string>("");
-  
+  // Strictly set to null to guarantee the modal trigger
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isAdding, setIsAdding] = useState(false);
   const [buttonText, setButtonText] = useState("Add to Bag");
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
   const [isSelectSizeModalOpen, setIsSelectSizeModalOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<"cart" | "buy" | null>(null);
+  const [showStickyBar, setShowStickyBar] = useState(false);
 
-  const { addItem } = useCartStore();
+  const { addItem, openCart } = useCartStore();
   const carouselRef = useRef<HTMLDivElement | null>(null);
+
+  // Scroll Listener for Sticky Bar
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 500) {
+        setShowStickyBar(true);
+      } else {
+        setShowStickyBar(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const executeAddToCart = (sizeToUse: string) => {
     if (!product) return;
     addItem({ productId, name: product.name, price: priceLabel, size: sizeToUse, image: product.images[0] });
     setIsAdding(true);
     setButtonText("Stitching...");
+    
     setTimeout(() => {
       setButtonText("Added *");
       setIsAdding(false);
+      openCart(); 
       setTimeout(() => setButtonText("Add to Bag"), 2000);
     }, 800);
   };
 
-  // 2. Strict checks locked in to force the Modal to open
-  const handleAddToCart = () => {
-    if (selectedSize === "") {
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Absolute strict check: If there is no size, halt and open modal.
+    if (!selectedSize) {
       setPendingAction("cart");
       setIsSelectSizeModalOpen(true);
       return;
@@ -71,8 +87,10 @@ export default function ProductPage() {
     executeAddToCart(selectedSize);
   };
 
-  const handleBuyNow = () => {
-    if (selectedSize === "") {
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Absolute strict check: If there is no size, halt and open modal.
+    if (!selectedSize) {
       setPendingAction("buy");
       setIsSelectSizeModalOpen(true);
       return;
@@ -82,13 +100,11 @@ export default function ProductPage() {
 
   const handleModalSizeSelect = (size: string) => {
     setSelectedSize(size);
-    setIsSelectSizeModalOpen(false); // Close modal first
+    setIsSelectSizeModalOpen(false);
     
-    // Execute the action the user originally clicked
     if (pendingAction === "cart") executeAddToCart(size);
     if (pendingAction === "buy") alert("Proceeding to secure checkout...");
-    
-    setPendingAction(null); // Reset the action
+    setPendingAction(null);
   };
 
   if (!product) {
@@ -100,7 +116,46 @@ export default function ProductPage() {
   }
 
   return (
-    <>
+    /* THE FIX: Wrapping the entire page in a key completely resets the memory cache every time you change products */
+    <div key={productId} className="relative">
+      
+      {/* Sticky Bottom Action Bar */}
+      <AnimatePresence>
+        {showStickyBar && (
+          <motion.div 
+            initial={{ y: 100 }} 
+            animate={{ y: 0 }} 
+            exit={{ y: 100 }} 
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed bottom-0 left-0 w-full z-[90] bg-[#07110F]/95 backdrop-blur-xl border-t border-dashed border-[#D0A85C]/30 py-4 px-6 md:px-12 flex justify-between items-center shadow-[0_-10px_40px_rgba(0,0,0,0.5)]"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-14 bg-[#0B1F1A] border border-dashed border-[#D0A85C]/50 hidden sm:block overflow-hidden">
+                <img src={product.images[0]} alt="" className="w-full h-full object-cover" />
+              </div>
+              <div>
+                <h4 className="text-[#F6E9C8] font-serif text-sm md:text-base">{product.name}</h4>
+                <p className="text-[#D0A85C] text-xs font-light tracking-widest">{priceLabel}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="text-[#F6E9C8]/50 text-[10px] uppercase tracking-widest hidden md:block">
+                {selectedSize ? `Size: ${selectedSize}` : "Select Size Above"}
+              </span>
+              <button 
+                onClick={handleAddToCart} 
+                disabled={isAdding || buttonText === "Added *"}
+                className={`px-8 py-3 transition-colors duration-300 tracking-widest text-[10px] uppercase font-bold border border-dashed border-[#D0A85C] ${
+                  buttonText === "Added *" ? "bg-[#D0A85C] text-[#0B1F1A]" : "bg-[#0B1F1A] text-[#D0A85C] hover:bg-[#D0A85C] hover:text-[#0B1F1A]"
+                }`}
+              >
+                {buttonText}
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence>
         {isSelectSizeModalOpen && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#07110F]/80 backdrop-blur-md" onClick={() => setIsSelectSizeModalOpen(false)}>
@@ -164,7 +219,7 @@ export default function ProductPage() {
         )}
       </AnimatePresence>
 
-      <main className="bg-[#0B1F1A] text-[#F6E9C8] min-h-screen font-sans selection:bg-[#D0A85C] selection:text-[#0B1F1A] relative overflow-hidden flex flex-col">
+      <main className="bg-[#0B1F1A] text-[#F6E9C8] min-h-screen font-sans selection:bg-[#D0A85C] selection:text-[#0B1F1A] relative overflow-hidden flex flex-col pb-24">
         <ThreadBackground />
         <SiteNav active="collection" />
 
@@ -178,7 +233,7 @@ export default function ProductPage() {
               <div ref={carouselRef} className="w-full overflow-hidden cursor-grab active:cursor-grabbing pb-4 relative">
                 <motion.div drag="x" dragConstraints={carouselRef} dragElastic={0.2} dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }} className="flex gap-3 w-max">
                   {product.images.map((img: string, index: number) => (
-                    <motion.div key={`${img}-${index}`} onClick={() => setActiveImageIndex(index)} className={`w-20 h-24 flex-shrink-0 relative p-1 transition-all duration-300 pointer-events-auto ${activeImageIndex === index ? "border border-dashed border-[#D0A85C] opacity-100 shadow-[0_0_10px_rgba(208,168,92,0.3)]" : "border border-transparent opacity-50 hover:opacity-90"}`}>
+                    <motion.div key={`${img}-${index}`} onClick={() => setActiveImageIndex(index)} className={`w-20 h-24 flex-shrink-0 relative p-1 transition-all duration-300 pointer-events-auto cursor-pointer ${activeImageIndex === index ? "border border-dashed border-[#D0A85C] opacity-100 shadow-[0_0_10px_rgba(208,168,92,0.3)]" : "border border-transparent opacity-50 hover:opacity-90"}`}>
                       <img src={img} alt={`Thumbnail ${index + 1}`} className="w-full h-full object-cover bg-[#07110F] pointer-events-none" />
                     </motion.div>
                   ))}
@@ -227,6 +282,6 @@ export default function ProductPage() {
           </div>
         </div>
       </main>
-    </>
+    </div>
   );
 }
