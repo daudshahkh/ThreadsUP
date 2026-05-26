@@ -17,7 +17,7 @@ export const productCatalog: Product[] = [
   {
     id: "1",
     name: "Heavy-Gauge Washed Tee",
-    price: 45,
+    price: 799,
     category: "Tops",
     description:
       "A staple for the modern wardrobe. This oversized, drop-shoulder silhouette is crafted from premium 240 GSM heavyweight cotton, providing a structured yet effortless drape. Pre-washed for a vintage feel with our signature tonal embroidery.",
@@ -30,7 +30,7 @@ export const productCatalog: Product[] = [
   {
     id: "2",
     name: "Forest Hoodie",
-    price: 85,
+    price: 799,
     category: "Outerwear",
     description:
       "Heavyweight luxury. Crafted with dense loopback french terry, antique gold-tone hardware, and a double-lined hood for a structured daily layer.",
@@ -43,7 +43,7 @@ export const productCatalog: Product[] = [
   {
     id: "3",
     name: "Tailored Cargo Pants",
-    price: 65,
+    price: 799,
     category: "Bottoms",
     description:
       "Utilitarian design meets bespoke tailoring. Durable cotton twill, reinforced seams, deep gusseted pockets, and an adjustable waist create a clean modern drape.",
@@ -56,7 +56,7 @@ export const productCatalog: Product[] = [
   {
     id: "4",
     name: "Oversized Studio Crewneck",
-    price: 75,
+    price: 799,
     category: "Tops",
     description:
       "A clean studio layer with relaxed proportion, soft structure, and subtle tonal detailing made for repeat wear.",
@@ -69,7 +69,7 @@ export const productCatalog: Product[] = [
   {
     id: "5",
     name: "Utility Vest",
-    price: 110,
+    price: 799,
     category: "Outerwear",
     description:
       "A functional top layer with quiet hardware, tailored volume, and utility storage that keeps the silhouette sharp.",
@@ -82,7 +82,7 @@ export const productCatalog: Product[] = [
   {
     id: "6",
     name: "Pleated Wide-Leg Trousers",
-    price: 80,
+    price: 799,
     category: "Bottoms",
     description:
       "A softer tailored trouser with generous movement, a pressed front, and a streetwear-ready wide leg.",
