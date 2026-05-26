@@ -24,20 +24,30 @@ export default function SiteNav({ position = "relative", active }: SiteNavProps)
         <img src="/logo.png" alt="ThreadsUP Studio Logo" className="w-full h-auto object-contain" />
       </Link>
 
-      <div className="hidden lg:flex items-center gap-10 absolute left-1/2 transform -translate-x-1/2">
-        <Link href="/shop" className={active === "collection" ? activeLink : baseLink}>
-          Collection
-        </Link>
-        <Link href="/bundler" className={active === "bundler" ? activeLink : baseLink}>
-          Curate a Fit
-        </Link>
-        <Link href="/lookbook" className={active === "lookbook" ? activeLink : baseLink}>
-          Lookbook
-        </Link>
-        <Link href="/about" className={active === "atelier" ? activeLink : baseLink}>
-          Atelier
-        </Link>
-      </div>
+      <div className="hidden lg:flex items-center gap-12 absolute left-1/2 transform -translate-x-1/2 h-full z-50">
+          
+          {/* Collection Dropdown Parent */}
+          <div className="relative group flex items-center py-4">
+            <a href="/shop" className="text-[#F6E9C8]/70 hover:text-[#D0A85C] tracking-widest text-[10px] uppercase transition-colors border-b border-dashed border-transparent hover:border-[#D0A85C] pb-1">
+              Collection
+            </a>
+            
+            {/* The Frosted Glass Dropdown Menu */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 top-[100%] mt-0 w-48 bg-[#0B1F1A]/95 backdrop-blur-md border border-dashed border-[#D0A85C]/30 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 flex flex-col shadow-2xl">
+              <a href="/shop/tops" className="px-4 py-4 text-[10px] uppercase tracking-widest text-[#F6E9C8]/70 hover:text-[#D0A85C] hover:bg-[#123229]/50 border-b border-dashed border-[#D0A85C]/10 text-center transition-colors">Tops</a>
+              <a href="/shop/bottoms" className="px-4 py-4 text-[10px] uppercase tracking-widest text-[#F6E9C8]/70 hover:text-[#D0A85C] hover:bg-[#123229]/50 border-b border-dashed border-[#D0A85C]/10 text-center transition-colors">Bottoms</a>
+              <a href="/shop/outerwear" className="px-4 py-4 text-[10px] uppercase tracking-widest text-[#F6E9C8]/70 hover:text-[#D0A85C] hover:bg-[#123229]/50 border-b border-dashed border-[#D0A85C]/10 text-center transition-colors">Outerwear</a>
+              <a href="/shop/paws-and-pause" className="px-4 py-4 text-[10px] uppercase tracking-widest text-[#D0A85C] hover:text-[#F6E9C8] hover:bg-[#D0A85C]/20 text-center transition-colors font-bold">Paws & Pause</a>
+            </div>
+          </div>
+
+          <a href="/bundler" className="text-[#F6E9C8]/70 hover:text-[#D0A85C] tracking-widest text-[10px] uppercase transition-colors border-b border-dashed border-transparent hover:border-[#D0A85C] pb-1">
+            Curate a Fit
+          </a>
+          <a href="/#lookbook" className="text-[#F6E9C8]/70 hover:text-[#D0A85C] tracking-widest text-[10px] uppercase transition-colors border-b border-dashed border-transparent hover:border-[#D0A85C] pb-1">
+            Lookbook
+          </a>
+        </div>
 
       <div className="flex items-center gap-6 md:gap-8">
         <button onClick={openCart} className="relative text-[#D0A85C] hover:text-[#F6E9C8] transition-colors group" aria-label="Open cart">

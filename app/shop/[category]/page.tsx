@@ -4,20 +4,41 @@ import React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Show, UserButton } from "@clerk/nextjs";
-import { useCartStore } from "@/store/cartStore";
-import { categories, formatPrice, productCatalog } from "@/data/products";
+import SiteNav from "@/components/SiteNav";
+
+// 1. Import BOTH of your data files!
+import { formatPrice, productCatalog } from "@/data/products";
+import { studioCollections } from "@/data/collections";
 
 export default function CategoryPage() {
   const params = useParams();
-  const { openCart, items } = useCartStore();
-  
-  // 1. Grab the category from the URL (e.g., "tops") and format it to match our data (e.g., "Tops")
   const rawCategory = params.category as string;
-  const formattedCategory = rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1).toLowerCase();
 
-  // 2. Filter products based on the URL parameter
-  const filteredProducts = productCatalog.filter(product => product.category === formattedCategory);
+  // The Magic Decoder
+  let formattedCategory = "";
+  if (rawCategory === "paws-and-pause") {
+    formattedCategory = "Paws & Pause";
+  } else {
+    formattedCategory = rawCategory.charAt(0).toUpperCase() + rawCategory.slice(1).toLowerCase();
+  }
+
+  // 2. The Smart Data Router
+  let filteredProducts: any[] = []; 
+
+  if (rawCategory === "paws-and-pause") {
+    // We add 'as any' here to tell TypeScript to relax its strict blueprint rules for a moment
+    const targetCollection = studioCollections.find((col) => col.slug === "paws-and-pause") as any;
+    
+    // We fetch the 'products' array from your collection
+    filteredProducts = targetCollection?.products || [];
+  } else {
+    // Otherwise, filter standard categories from products.ts
+    filteredProducts = productCatalog.filter(
+      (product) => product.category === formattedCategory
+    );
+  }
+
+  const displayCategories: string[] = ["All", "Tops", "Bottoms", "Outerwear", "Paws & Pause"];
 
   return (
     <main className="bg-[#0B1F1A] text-[#F6E9C8] min-h-screen font-sans selection:bg-[#D0A85C] selection:text-[#0B1F1A] relative overflow-hidden flex flex-col">
@@ -27,47 +48,7 @@ export default function CategoryPage() {
         <path d="M110,40 C 80,60 10,30 -10,70" fill="transparent" stroke="#D0A85C" strokeWidth="0.1" strokeDasharray="1,1" />
       </svg>
 
-      <nav className="relative z-20 p-6 md:px-10 flex justify-between items-center border-b border-dashed border-[#D0A85C]/30 bg-[#07110F]/50 backdrop-blur-md">
-        <Link href="/" className="w-20 md:w-28 drop-shadow-xl hover:opacity-80 transition-opacity">
-          <img src="/logo.png" alt="ThreadsUP Studio Logo" className="w-full h-auto object-contain" />
-        </Link>
-        
-        <div className="hidden lg:flex items-center gap-12 absolute left-1/2 transform -translate-x-1/2">
-          <Link href="/shop" className="text-[#D0A85C] tracking-widest text-[10px] uppercase border-b border-dashed border-[#D0A85C] pb-1">
-            Collection
-          </Link>
-          <Link href="/lookbook" className="text-[#F6E9C8]/70 hover:text-[#D0A85C] tracking-widest text-[10px] uppercase transition-colors border-b border-dashed border-transparent hover:border-[#D0A85C] pb-1">
-            Lookbook
-          </Link>
-        </div>
-
-        <div className="flex items-center gap-6 md:gap-8">
-          <button onClick={openCart} className="relative text-[#D0A85C] hover:text-[#F6E9C8] transition-colors group">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="square" strokeLinejoin="miter" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-            </svg>
-            {items.length > 0 && (
-              <span className="absolute -top-1.5 -right-2 flex h-3.5 w-3.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#D0A85C] opacity-40"></span>
-                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#D0A85C] text-[#0B1F1A] text-[9px] items-center justify-center font-bold">
-                  {items.length}
-                </span>
-              </span>
-            )}
-          </button>
-          
-          <div className="h-4 w-[1px] bg-[#D0A85C]/30 hidden sm:block"></div>
-
-          <Show when="signed-out">
-            <Link href="/login" className="text-[#D0A85C] font-light tracking-widest text-[10px] uppercase hover:text-[#F6E9C8] transition-colors border-b border-dashed border-transparent hover:border-[#D0A85C] pb-1">
-              Sign In
-            </Link>
-          </Show>
-          <Show when="signed-in">
-            <UserButton appearance={{ elements: { userButtonAvatarBox: "w-7 h-7 border border-dashed border-[#D0A85C]" } }} />
-          </Show>
-        </div>
-      </nav>
+      <SiteNav position="relative" />
 
       <div className="relative z-10 pt-16 pb-8 px-6 md:px-12 max-w-7xl mx-auto w-full">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center mb-16">
@@ -77,19 +58,23 @@ export default function CategoryPage() {
 
         {/* Dynamic Filter Links */}
         <div className="flex flex-wrap justify-center gap-8 md:gap-16 border-b border-dashed border-[#D0A85C]/30 pb-6 mb-12">
-          {categories.map((cat) => (
-            <Link
-              key={cat}
-              href={cat === "All" ? "/shop" : `/shop/${cat.toLowerCase()}`}
-              className={`text-xs uppercase tracking-widest transition-all duration-300 ${
-                formattedCategory === cat 
-                ? "text-[#D0A85C] border-b border-dashed border-[#D0A85C] pb-2" 
-                : "text-[#F6E9C8]/50 hover:text-[#D0A85C] pb-2 border-b border-dashed border-transparent hover:border-[#D0A85C]/50"
-              }`}
-            >
-              {cat}
-            </Link>
-          ))}
+          {displayCategories.map((cat) => {
+            const urlFormat = cat.toLowerCase().replace(/ & /g, '-and-').replace(/ /g, '-');
+            
+            return (
+              <Link
+                key={cat}
+                href={cat === "All" ? "/shop" : `/shop/${urlFormat}`}
+                className={`text-xs uppercase tracking-widest transition-all duration-300 ${
+                  formattedCategory === cat 
+                  ? "text-[#D0A85C] border-b border-dashed border-[#D0A85C] pb-2" 
+                  : "text-[#F6E9C8]/50 hover:text-[#D0A85C] pb-2 border-b border-dashed border-transparent hover:border-[#D0A85C]/50"
+                }`}
+              >
+                {cat}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Product Grid */}
@@ -107,8 +92,10 @@ export default function CategoryPage() {
                 <Link href={`/product/${product.id}`} className="block group">
                   <div className="flex flex-col items-center bg-[#07110F]/40 p-4 border border-[#D0A85C]/20 border-dashed hover:bg-[#123229] hover:border-[#D0A85C] transition-all duration-500 shadow-lg">
                     <div className="w-full aspect-[4/5] overflow-hidden mb-6 bg-[#07110F] relative">
-                      <img src={product.mainImage} alt={product.name} className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-0 transition-opacity duration-700" />
-                      <img src={product.hoverImage} alt={`${product.name} Lifestyle`} className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-80 transition-opacity duration-700 scale-105 group-hover:scale-100" />
+                      <img src={product.mainImage || product.image} alt={product.name} className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-0 transition-opacity duration-700" />
+                      {product.hoverImage && (
+                         <img src={product.hoverImage} alt={`${product.name} Lifestyle`} className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-80 transition-opacity duration-700 scale-105 group-hover:scale-100" />
+                      )}
                     </div>
                     <h3 className="font-serif text-[#F6E9C8] text-lg text-center group-hover:text-[#D0A85C] transition-colors duration-300">{product.name}</h3>
                     <p className="text-[#D0A85C]/80 font-light tracking-widest text-sm mt-2">{formatPrice(product.price)}</p>
