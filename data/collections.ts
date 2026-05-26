@@ -86,7 +86,7 @@ export const studioCollections: StudioCollection[] = [
 ];
 
 export function formatCollectionPrice(price: number) {
-  return `$${price.toFixed(2)}`;
+  return `₹${price.toFixed(2)}`;
 }
 
 export function getCollectionBySlug(slug: string) {
